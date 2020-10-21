@@ -4,7 +4,9 @@
 	"description": "Code base nodejs restful",
 	"main": "src/index.js",
 	"scripts": {
-		"start": "nodemon src/index.js"
+		"start": "nodemon src/index.js",
+		"test": "echo test",
+		"build": "echo build"
 	},
 	"dependencies": {
 		"bcrypt": "5.0.0",
