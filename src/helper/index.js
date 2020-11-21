@@ -1,5 +1,5 @@
-const { mongoose } = require('./database')
+const { connection } = require('./database')
 
 module.exports = {
-    mongoose
+	connection
 }

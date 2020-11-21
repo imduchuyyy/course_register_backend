@@ -1,15 +1,17 @@
 const mongoose = require('mongoose')
-const { MONGO_URL } = require('../../environments')
+const mysql = require('mysql')
+const {
+	DATABASE_NAME,
+	DATABASE_HOST,
+	DATABASE_USERNAME,
+	DATABASE_PASSWORD
+} = require('../../environments')
 
-const connectionOptions = {
-	useNewUrlParser: true,
-	useUnifiedTopology: true
-}
+const connection = mysql.createConnection({
+	host: DATABASE_HOST,
+	user: DATABASE_USERNAME,
+	password: DATABASE_PASSWORD,
+	database: DATABASE_NAME
+})
 
-mongoose.Promise = global.Promise
-
-mongoose.connect(MONGO_URL, connectionOptions)
-
-mongoose.set('debug', true)
-
-module.exports = { mongoose }
+module.exports = { connection }

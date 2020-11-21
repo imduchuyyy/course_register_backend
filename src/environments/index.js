@@ -4,8 +4,10 @@ require('dotenv').config()
 const PORT = process.env.PORT || 5000
 
 //Database
+const DATABASE_HOST = process.env.DATABASE_HOST || 'localhost'
+const DATABASE_USERNAME = process.env.DATABASE_USERNAME || 'root'
+const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD || '123'
 const DATABASE_NAME = process.env.DATABASE_NAME || 'Code-base-restful'
-const MONGO_URL = process.env.MONGO_URL || `mongodb+srv://duchuy:123@cluster0.qxmxe.mongodb.net/${DATABASE_NAME}?retryWrites=true&w=majority`
 
 //Jsonwebtoken
 const PRIVATE_KEY = process.env.PRIVATE_KEY || 'duchuy'
@@ -14,9 +16,11 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY || 'duchuy'
 const SALT = process.env.SALT || 10
 
 module.exports = {
-    PORT,
-    DATABASE_NAME,
-    MONGO_URL,
-    PRIVATE_KEY,
-    SALT
+	PORT,
+	DATABASE_NAME,
+	DATABASE_HOST,
+	DATABASE_USERNAME,
+	DATABASE_PASSWORD,
+	PRIVATE_KEY,
+	SALT
 }

@@ -1,7 +1,7 @@
-const { checkAuth } = require('./checkAuth')
+const authMiddleWare = require('./checkAuth')
 const { createAccountLimiter } = require('./limiter')
 
 module.exports = {
-    checkAuth,
+    authMiddleWare,
     createAccountLimiter
 }

@@ -9,7 +9,20 @@ const checkAuth = async (req, res, next, role) => {
                 message: 'User dont have permission'
             })
         }
-        req.user = decode
+        req.currentUser = decode
+        next()
+    } catch (error) {
+        return res.status(401).json({
+            message: 'Token is invalid'
+        })
+    }
+}
+
+const decodeUser = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1]
+        const decode = await verifyToken(token)
+        req.currentUser = decode
         next()
     } catch (error) {
         return res.status(401).json({
@@ -19,5 +32,6 @@ const checkAuth = async (req, res, next, role) => {
 }
 
 module.exports = {
-    checkAuth
+    checkAuth,
+    decodeUser
 }
