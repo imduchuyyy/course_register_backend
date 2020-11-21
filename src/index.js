@@ -1,7 +1,6 @@
 const express = require('express')
 const app = express()
 const http = require('http').createServer(app)
-const io = require('socket.io')(http)
 
 const cors = require('cors')
 const bodyParser = require('body-parser')
@@ -18,7 +17,7 @@ cors()
 
 app.use('/user', UserRoute)
 
-// connected mongo database
+// connected mysql database
 connection.connect((err) => {
 	if (err) {
 		console.log('❌  error occurred from the mysql database')

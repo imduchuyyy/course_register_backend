@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const mysql = require('mysql')
 const {
 	DATABASE_NAME,

@@ -5,9 +5,9 @@ const PORT = process.env.PORT || 5000
 
 //Database
 const DATABASE_HOST = process.env.DATABASE_HOST || 'localhost'
-const DATABASE_USERNAME = process.env.DATABASE_USERNAME || 'root'
+const DATABASE_USERNAME = process.env.DATABASE_USERNAME || 'name'
 const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD || '123'
-const DATABASE_NAME = process.env.DATABASE_NAME || 'Code-base-restful'
+const DATABASE_NAME = process.env.DATABASE_NAME || 'name'
 
 //Jsonwebtoken
 const PRIVATE_KEY = process.env.PRIVATE_KEY || 'duchuy'

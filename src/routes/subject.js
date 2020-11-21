@@ -7,7 +7,6 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
 	async (req, res, next) => {
 		try {
-			// const formatUsers = await User.find().select('-password -orders')
 			console.log(req)
 			return res.status(200).json({})
 		} catch (err) {
