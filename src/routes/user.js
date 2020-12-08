@@ -1,9 +1,10 @@
 const express = require('express')
 const { authMiddleWare } = require('../middlewares')
+const { hashPassword, comparePassword, generateToken } = require('../utils')
 const router = express.Router()
-const { connection } = require('../helper')
+const { query, connection } = require('../helper')
 
-router.post('/', async (req, res, next) => {
+router.post('/new_student', async (req, res, next) => {
 	try {
 		connection.query('SELECT * FROM PERSON', (err, rows) => {
 			console.log(rows)
@@ -20,8 +21,11 @@ router.post(
 	async (req, res, next) => {
 		try {
 			// const formatUsers = await User.find().select('-password -orders')
-			console.log(req)
-			return res.status(200).json(req)
+			// console.log(req)
+			console.log(req.current_user)
+			return res.status(200).json({
+				current_user: req.current_user
+			})
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -30,9 +34,27 @@ router.post(
 
 router.post('/login', async (req, res, next) => {
 	try {
-		console.log(req.params)
-		return res.status(200).json(req)
+		const { username, password } = req.body
+		const rows = await query(
+			`SELECT * FROM ACCOUNTS WHERE USERNAME = '${username}';`
+		)
+
+		const { PASS, SSN } = rows[0]
+
+		const matchPassword = await comparePassword(password, PASS)
+
+		if (matchPassword) {
+			const token = await generateToken(SSN)
+			res.status(200).json({
+				token: token
+			})
+		} else {
+			res.status(401).json({
+				message: 'username or password is incorrect'
+			})
+		}
 	} catch (err) {
+		console.log(err)
 		return res.status(500).json({ message: err })
 	}
 })

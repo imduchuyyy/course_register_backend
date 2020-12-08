@@ -1,7 +1,7 @@
 const { sign, verify } = require('jsonwebtoken')
 
 const { PRIVATE_KEY } = require('../../environments')
-const { UserEntity } = require('../../models')
+const { query } = require('../../helper')
 
 /**
  * Returns token.
@@ -15,13 +15,13 @@ const { UserEntity } = require('../../models')
  *
  */
 
-const generateToken = async (user) => {
-    return await sign(
-        {
-            _id: user._id
-        },
-        PRIVATE_KEY
-    )
+const generateToken = async (ssn) => {
+	return await sign(
+		{
+			ssn: ssn
+		},
+		PRIVATE_KEY
+	)
 }
 
 /**
@@ -36,11 +36,13 @@ const generateToken = async (user) => {
  */
 
 const verifyToken = async (token) => {
-    const { _id } = await verify(token, PRIVATE_KEY)
-    return await UserEntity.findOne({ _id })
+	const { ssn } = await verify(token, PRIVATE_KEY)
+	const rows = await query(`SELECT * FROM PERSON WHERE SSN = '${ssn}'`)
+	console.log(rows)
+	return rows[0]
 }
 
 module.exports = {
-    generateToken, 
-    verifyToken
+	generateToken,
+	verifyToken
 }

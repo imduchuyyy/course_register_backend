@@ -1,5 +1,6 @@
-const { connection } = require('./connect')
+const { connection, query } = require('./connect')
 
 module.exports = {
-	connection
+	connection,
+	query
 }

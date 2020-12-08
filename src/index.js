@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express')
 const compression = require('compression')
 const UserRoute = require('./routes/user')
+const SubjectRoute = require('./routes/subject')
 
 const { PORT } = require('./environments')
 const { connection } = require('./helper')
@@ -15,7 +16,16 @@ const { connection } = require('./helper')
 app.use(compression())
 cors()
 
-app.use('/user', UserRoute)
+app.use(
+	express.urlencoded({
+		extended: true
+	})
+)
+
+app.use(express.json())
+
+app.use('/api', UserRoute)
+app.use('/api', SubjectRoute)
 
 // connected mysql database
 connection.connect((err) => {

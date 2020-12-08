@@ -1,4 +1,5 @@
 const mysql = require('mysql')
+const util = require('util')
 const {
 	DATABASE_NAME,
 	DATABASE_HOST,
@@ -13,4 +14,6 @@ const connection = mysql.createConnection({
 	database: DATABASE_NAME
 })
 
-module.exports = { connection }
+const query = util.promisify(connection.query).bind(connection)
+
+module.exports = { connection, query }
