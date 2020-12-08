@@ -14,7 +14,7 @@ const { connection } = require('./helper')
 
 // reduce size file
 app.use(compression())
-cors()
+app.use(cors())
 
 app.use(
 	express.urlencoded({

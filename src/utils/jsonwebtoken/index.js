@@ -38,7 +38,6 @@ const generateToken = async (ssn) => {
 const verifyToken = async (token) => {
 	const { ssn } = await verify(token, PRIVATE_KEY)
 	const rows = await query(`SELECT * FROM PERSON WHERE SSN = '${ssn}'`)
-	console.log(rows)
 	return rows[0]
 }
 
