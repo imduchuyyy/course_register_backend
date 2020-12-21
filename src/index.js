@@ -8,6 +8,7 @@ const swaggerUi = require('swagger-ui-express')
 const compression = require('compression')
 const UserRoute = require('./routes/user')
 const SubjectRoute = require('./routes/subject')
+const CourseRoute = require('./routes/course')
 
 const { PORT } = require('./environments')
 const { connection } = require('./helper')
@@ -26,6 +27,7 @@ app.use(express.json())
 
 app.use('/api', UserRoute)
 app.use('/api', SubjectRoute)
+app.use('/api', CourseRoute)
 
 // connected mysql database
 connection.connect((err) => {
