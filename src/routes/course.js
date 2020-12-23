@@ -15,6 +15,8 @@ router.post(
 	}
 )
 
+
+
 router.post(
 	'/register_course',
         (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),

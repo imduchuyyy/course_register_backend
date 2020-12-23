@@ -1,13 +1,14 @@
 const express = require('express')
 const { authMiddleWare } = require('../middlewares')
 const router = express.Router()
+const { insertClass }  = require('./service/class')
 
 router.post(
 	'/insert_class',
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
 	async (req, res, next) => {
 		try {
-			console.log("insert class")
+			insertClass({})
 			return res.status(200).json({})
 		} catch (err) {
 			return res.status(500).json({ message: err })
@@ -122,4 +123,4 @@ router.post(
     }
 )
 
-module.export = router
+module.exports = router

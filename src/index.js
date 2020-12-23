@@ -9,6 +9,8 @@ const compression = require('compression')
 const UserRoute = require('./routes/user')
 const SubjectRoute = require('./routes/subject')
 const CourseRoute = require('./routes/course')
+const ClassRoute = require('./routes/class')
+const StudentRoute = require('./routes/student')
 
 const { PORT } = require('./environments')
 const { connection } = require('./helper')
@@ -25,9 +27,12 @@ app.use(
 
 app.use(express.json())
 
+
+app.use('/api', ClassRoute)
 app.use('/api', UserRoute)
 app.use('/api', SubjectRoute)
 app.use('/api', CourseRoute)
+app.use('/api', StudentRoute)
 
 // connected mysql database
 connection.connect((err) => {
