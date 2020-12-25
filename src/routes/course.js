@@ -15,7 +15,44 @@ router.post(
 	}
 )
 
+router.post(
+	'/add_course',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
+	async (req, res, next) => {
+		try {
+		    console.log("add course")
+                    return res.status(200).json({})
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
 
+router.post(
+	'/list_course',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
+	async (req, res, next) => {
+		try {
+		    console.log("list course")
+                    return res.status(200).json({})
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
+router.post(
+	'/list_course_registed',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
+	async (req, res, next) => {
+		try {
+		    console.log("list course registed")
+                    return res.status(200).json({})
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
 
 router.post(
 	'/register_course',

@@ -17,6 +17,19 @@ router.post(
 )
 
 router.post(
+	'/list_class',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
+	async (req, res, next) => {
+		try {
+			insertClass({})
+			return res.status(200).json({})
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
+router.post(
     '/view_class_and_document',
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
     async (req, res, next) => {
@@ -31,6 +44,50 @@ router.post(
     }
 )
 
+router.post(
+    '/view_class_by_student',
+    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+    async (req, res, next) => {
+        try {
+            console.log("view class by student")
+            return res.status(200).json(req)
+        } catch (err) {
+            return res.status(500).json({
+                message: err
+            })
+        }
+    }
+)
+
+router.post(
+    '/view_class_by_teacher',
+    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+    async (req, res, next) => {
+        try {
+            console.log("view class by teacher")
+            return res.status(200).json(req)
+        } catch (err) {
+            return res.status(500).json({
+                message: err
+            })
+        }
+    }
+)
+
+router.post(
+    '/view_class',
+    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+    async (req, res, next) => {
+        try {
+            console.log("view class")
+            return res.status(200).json(req)
+        } catch (err) {
+            return res.status(500).json({
+                message: err
+            })
+        }
+    }
+)
 
 
 router.post(
@@ -63,20 +120,6 @@ router.post(
     }
 )
 
-router.post(
-    '/view_list_class',
-    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
-    async (req, res, next) => {
-        try {
-            console.log("view list class")
-            return res.status(200).json(req)
-        } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
-        }
-    }
-)
 
 router.post(
     '/sum_class_of_instructor',
