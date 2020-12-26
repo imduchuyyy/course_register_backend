@@ -1,16 +1,18 @@
 const express = require('express')
 const { authMiddleWare } = require('../middlewares')
 const router = express.Router()
-
-const { insertClass, 
-        listClass, 
-        viewClassAndDocument,
-        
-        viewClassInSemester,
-        viewClassOfCourse,
-        sumClassInstructor,
-        top5Class,
-        top5SemesterHighClass } = require('./service/class')
+const { 
+    insertClass,
+    listClass,
+    viewClassAndDocument,
+    viewClassByStudent,
+    viewClassByTeacher,
+    viewClass,
+    viewClassInSemester,
+    viewClassOfCourse,
+    sumClassInstructor,
+    top5Class,
+    top5SemesterHighClass } = require('./service/class')
 
 router.post(
 	'/insert_class',
@@ -51,30 +53,24 @@ router.post(
 
 router.post(
     '/view_class_by_student',
-    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'AAO_STAFF'),
     async (req, res, next) => {
         try {
-            console.log("view class by student")
-            return res.status(200).json(req)
+            return res.status(200).json(await viewClassByStudent(req.body.student_id, req.body.semester))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
 
 router.post(
     '/view_class_by_teacher',
-    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'AAO_STAFF'),
     async (req, res, next) => {
         try {
-            console.log("view class by teacher")
-            return res.status(200).json(req)
+            return res.status(200).json(await viewClassByTeacher(req.body.instructor_id, req.body.semester))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )

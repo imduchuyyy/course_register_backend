@@ -17,16 +17,18 @@ async function listClass(semester, faculty) {
 }
 
 async function viewClassAndDocument(student_id, semester) {
-    const result = await query(`CALL VIEW_CLASS_AND_DOCUMENT('${student_id}', '${semester}')`);
+    const result = await query(`CALL VIEW_CLASS_AND_DOCUMENT('${student_id}', '${semester}');`);
     return result[0]
 }
 
-async function viewClassByStudent() {
-
+async function viewClassByStudent(student_id, semester) {
+    const result = await query(`CALL getClassOfStudent('${student_id}', '${semester}');`);
+    return result[0]
 }
 
-async function viewClassByTeacher() {
-
+async function viewClassByTeacher(instructor_id, semester) {
+    const result = await query(`CALL getClassByInstructor('${instructor_id}', '${semester}');`);
+    return result[0]
 }
 
 async function viewClass() {
@@ -34,27 +36,32 @@ async function viewClass() {
 }
 
 async function viewClassInSemester(student_id, semester) {
-    const result = await query(`CALL VIEW_CLASS_IN_SEMESTER('${student_id}', '${semester}')`);
+    const result = await query(`CALL VIEW_CLASS_IN_SEMESTER('${student_id}', '${semester}');`);
     return result[0]
 }
 
 async function viewClassOfCourse(student_id, semester) {
-    const result = await query(`CALL VIEW_CLASS_OF_COURSE('${student_id}', '${semester}')`);
+    const result = await query(`CALL VIEW_CLASS_OF_COURSE('${student_id}', '${semester}');`);
     return result[0]
 }
 
 async function sumClassInstructor(instructor_id, semester) {
-    const result = await query(`CALL SUM_CLASS_OF_INSTRUCTOR('${instructor_id}', '${semester}')`);
+    const result = await query(`CALL SUM_CLASS_OF_INSTRUCTOR('${instructor_id}', '${semester}');`);
     return result[0]
 }
 
 async function top5Class(instructor_id) {
-    const result = await query(`CALL TOP_5_CLASS('${instructor_id}')`);
+    const result = await query(`CALL TOP_5_CLASS('${instructor_id}');`);
     return result[0]
 }
 
 async function top5SemesterHighClass(instructor_id) {
-    const result = await query(`CALL TOP_5_SEMESTER_HIGH_CLASS('${instructor_id}')`);
+    const result = await query(`CALL TOP_5_SEMESTER_HIGH_CLASS('${instructor_id}');`);
+    return result[0]
+}
+
+async function numberOfClass() {  // i.9
+    const result = await query(`CALL getNumberOfClass();`);
     return result[0]
 }
 
@@ -62,10 +69,13 @@ module.exports = {
     insertClass,
     listClass,
     viewClassAndDocument,
-
+    viewClassByStudent,
+    viewClassByTeacher,
+    viewClass,
     viewClassInSemester,
     viewClassOfCourse,
     sumClassInstructor,
     top5Class,
-    top5SemesterHighClass
+    top5SemesterHighClass,
+    numberOfClass
 }
