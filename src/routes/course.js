@@ -1,6 +1,19 @@
 const express = require('express')
 const { authMiddleWare } = require('../middlewares')
 const router = express.Router()
+const {
+    insertCourse,
+    listCourse,
+    listCourseRegisted,
+    registerCourse,
+    viewCourses,
+    viewTotalCredit,
+    viewTotalCourseRegisted,
+    viewTop3Semester,
+    viewCourseDocument,
+    viewSumStudent,
+    courseInSemester
+} = require('./service/course')
 
 router.post(
 	'/',
@@ -20,8 +33,8 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
 	async (req, res, next) => {
 		try {
-		    console.log("add course")
-                    return res.status(200).json({})
+            await insertCourse(req.body)
+            return res.status(200).json({})
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -33,8 +46,8 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
 	async (req, res, next) => {
 		try {
-		    console.log("list course")
-                    return res.status(200).json({})
+
+            return res.status(200).json({})
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -47,7 +60,7 @@ router.post(
 	async (req, res, next) => {
 		try {
 		    console.log("list course registed")
-                    return res.status(200).json({})
+            return res.status(200).json({})
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -59,9 +72,8 @@ router.post(
         (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
 	async (req, res, next) => {
 		try {
-			// const formatUsers = await User.find().select('-password -orders')
-			console.log(req)
-			return res.status(200).json(req)
+            await registerCourse(req.body.course_id, req.body.student_id)
+            return res.status(200).json({})
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -69,16 +81,13 @@ router.post(
 )
 
 router.post(
-    '/view_coures',
+    '/view_courses',
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
     async (req, res, next) => {
         try {
-            console.log("view course")
-            return res.status(200).json(req)
+            return res.status(200).json(await viewCourses(req.body.student_id))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -88,12 +97,10 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
     async (req, res, next) => {
         try {
-            console.log("view total credit")
-            return res.status(200).json(req)
+            const { student_id, semester } = req.body
+            return res.status(200).json(await viewTotalCredit(student_id, semester))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -103,12 +110,10 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
     async (req, res, next) => {
         try {
-            console.log("view total course registed")
-            return res.status(200).json(req)
+            const { student_id, semester } = req.body
+            return res.status(200).json(await viewTotalCourseRegisted(student_id, semester))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -118,12 +123,9 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
     async (req, res, next) => {
         try {
-            console.log("view top 3 semeter")
-            return res.status(200).json(req)
+            return res.status(200).json(await viewTop3Semester(req.body.student_id))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -135,12 +137,10 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
     async (req, res, next) => {
         try {
-            console.log("view course document")
-            return res.status(200).json(req)
+            const { staff_id, semester, class_id } = req.body
+            return res.status(200).json(await viewCourseDocument(staff_id, semester, class_id))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -150,12 +150,10 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
     async (req, res, next) => {
         try {
-            console.log("view sum student")
-            return res.status(200).json(req)
+            const { staff_id, semester, class_id } = req.body
+            return res.status(200).json(await viewSumStudent(staff_id, semester, class_id))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -166,12 +164,11 @@ router.post(
     '/course_in_semeter',
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
     async (req, res, next) => {
-	try {
-	    console.log("course in semeter")
-	    return res.status(200).json({})
-	} catch (err) {
-	    return res.status(500).json({ message: err })
-	}
+        try {
+            return res.status(200).json(await courseInSemester(req.body.semester, req.body.faculty))
+        } catch (err) {
+            return res.status(500).json({ message: err })
+        }
     }
 )
 
