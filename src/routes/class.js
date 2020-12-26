@@ -1,14 +1,23 @@
 const express = require('express')
 const { authMiddleWare } = require('../middlewares')
 const router = express.Router()
-const { insertClass }  = require('./service/class')
+
+const { insertClass, 
+        listClass, 
+        viewClassAndDocument,
+        
+        viewClassInSemester,
+        viewClassOfCourse,
+        sumClassInstructor,
+        top5Class,
+        top5SemesterHighClass } = require('./service/class')
 
 router.post(
 	'/insert_class',
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
 	async (req, res, next) => {
 		try {
-			insertClass({})
+			await insertClass(req.body)
 			return res.status(200).json({})
 		} catch (err) {
 			return res.status(500).json({ message: err })
@@ -21,8 +30,7 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
 	async (req, res, next) => {
 		try {
-			insertClass({})
-			return res.status(200).json({})
+			return res.status(200).json(await listClass(req.body.semester, req.body.fcode))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -34,12 +42,9 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
     async (req, res, next) => {
         try {
-            console.log("view class and document")
-            return res.status(200).json(req)
+            return res.status(200).json(await viewClassAndDocument(req.body.student_id, req.body.semester))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -95,12 +100,9 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
     async (req, res, next) => {
         try {
-            console.log("view class in semeter")
-            return res.status(200).json(req)
+            return res.status(200).json(await viewClassInSemester(req.body.student_id, req.body.semester))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -110,12 +112,9 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
     async (req, res, next) => {
         try {
-            console.log("view class of course")
-            return res.status(200).json(req)
+            return res.status(200).json(await viewClassOfCourse(req.body.student_id, req.body.semester))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -126,12 +125,9 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
     async (req, res, next) => {
         try {
-            console.log("sum class of instructor")
-            return res.status(200).json(req)
+            return res.status(200).json(await sumClassInstructor(req.body.instructor_id, req.body.semester))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -141,12 +137,9 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
     async (req, res, next) => {
         try {
-            console.log("top 5 class")
-            return res.status(200).json(req)
+            return res.status(200).json(await top5Class(req.body.instructor_id))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
@@ -156,12 +149,9 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
     async (req, res, next) => {
         try {
-            console.log("top 5 semeter high class")
-            return res.status(200).json(req)
+            return res.status(200).json(await top5SemesterHighClass(req.body.instructor_id))
         } catch (err) {
-            return res.status(500).json({
-                message: err
-            })
+            return res.status(500).json({ message: err })
         }
     }
 )
