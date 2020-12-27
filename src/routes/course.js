@@ -14,6 +14,7 @@ const {
 	viewSumStudent,
 	courseInSemester
 } = require('./service/course')
+const { getStudentId } = require('./service/student')
 
 router.post(
 	'/add_course',
@@ -78,8 +79,10 @@ router.post(
 		try {
 			const { current_user } = req
 			const { SSN } = current_user
-			const result = await registerCourse(req.body.course_id, '000000001')
-			console.log(result)
+			const student_id = await getStudentId(SSN);
+			if (student_id == null)
+				return res.status(500).json({ message: "Invalid SSN" })
+			await registerCourse(req.body.course_id, student_id)
 			return res.status(200).json({ message: 'Success' })
 		} catch (err) {
 			console.log(err)

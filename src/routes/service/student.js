@@ -32,12 +32,20 @@ async function createStudent(studentInfo) {
 async function listStudentByFaculty(fcode) {
     let result = []
     if (fcode.toLowerCase().trim() == 'all') 
-        result = await query(`SELECT * FROM STUDENT;`)
-    else result = await query(`SELECT * FROM STUDENT WHERE FCODE = '${fcode}'`)
+        result = await query(`SELECT * FROM STUDENT NATURAL JOIN PERSON;`)
+    else result = await query(`SELECT * FROM STUDENT NATURAL JOIN PERSON WHERE FCODE = '${fcode}'`)
     return result
+}
+
+async function getStudentId(ssn) {
+    const result = await query(`SELECT STUDENT_ID FROM STUDENT WHERE SSN = '${ssn}'`);
+    if (result[0]) 
+        return result[0].STUDENT_ID
+    return null
 }
 
 module.exports = {
     createStudent,
-    listStudentByFaculty
+    listStudentByFaculty,
+    getStudentId
 }
