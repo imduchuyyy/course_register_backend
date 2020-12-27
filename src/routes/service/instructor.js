@@ -29,10 +29,19 @@ async function viewInChargedIntructor(){
     return rows[0]
 }
 
+async function listInstructorByFaculty(fcode) {
+    let result = []
+    if (fcode.toLowerCase().trim() == 'all') 
+        result = await query(`SELECT * FROM INSTRUCTOR;`)
+    else result = await query(`SELECT * FROM INSTRUCTOR NATURAL JOIN STAFF WHERE FCODE = '${fcode}';`)
+    return result
+}
+
 module.exports = {
     insertInstructor,
     listInstructorInSemester,
     listInstructor,
     topInstructorNum,
-    viewInChargedIntructor
+    viewInChargedIntructor,
+    listInstructorByFaculty
 }

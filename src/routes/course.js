@@ -46,8 +46,7 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
 	async (req, res, next) => {
 		try {
-
-            return res.status(200).json({})
+            return res.status(200).json(await listCourse(req.body.semester))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -59,8 +58,7 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
 	async (req, res, next) => {
 		try {
-		    console.log("list course registed")
-            return res.status(200).json({})
+            return res.status(200).json(await listCourseRegisted(req.body.student_id, req.body.semester))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}

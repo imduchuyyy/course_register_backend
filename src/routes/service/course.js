@@ -10,12 +10,27 @@ async function insertCourse(param) {
                 '${fcode.toUpperCase()}')`);
 }
 
-async function listCourse(semeter) {
-    
+async function listCourse(semester) {
+    const result = await query(`
+        SELECT *
+        FROM COURSE
+        WHERE COURSE_ID IN (
+            SELECT DISTINCT COURSE_ID 
+            FROM CLASS
+            WHERE YEAR_SEMESTER = '${semester}');
+    `)
+    return result;
 }
 
-async function listCourseRegisted() {
-    
+async function listCourseRegisted(student_id, semester) {
+    const result = {};
+    result.listCourseRegisted = await query(`
+        SELECT *
+        FROM REGISTER NATURAL JOIN COURSE
+        WHERE SEMESTER = '${semester}' AND STUDENT_ID = '${student_id}';
+    `);
+    result.totalCredit = (await viewTotalCredit(student_id, semester))[0].TOTAL_CREDIT
+    return result;
 }
 
 async function registerCourse(course_id, student_id) {
