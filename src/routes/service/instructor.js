@@ -32,8 +32,8 @@ async function viewInChargedIntructor(){
 async function listInstructorByFaculty(fcode) {
     let result = []
     if (fcode.toLowerCase().trim() == 'all') 
-        result = await query(`SELECT * FROM INSTRUCTOR;`)
-    else result = await query(`SELECT * FROM INSTRUCTOR NATURAL JOIN STAFF WHERE FCODE = '${fcode}';`)
+        result = await query(`SELECT * FROM INSTRUCTOR NATURAL JOIN STAFF NATURAL JOIN PERSON;`)
+    else result = await query(`SELECT * FROM INSTRUCTOR NATURAL JOIN STAFF NATURAL JOIN PERSON WHERE FCODE = '${fcode}';`)
     return result
 }
 

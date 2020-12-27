@@ -32,8 +32,8 @@ async function createStudent(studentInfo) {
 async function listStudentByFaculty(fcode) {
     let result = []
     if (fcode.toLowerCase().trim() == 'all') 
-        result = await query(`SELECT * FROM STUDENT;`)
-    else result = await query(`SELECT * FROM STUDENT WHERE FCODE = '${fcode}'`)
+        result = await query(`SELECT * FROM STUDENT NATURAL JOIN PERSON;`)
+    else result = await query(`SELECT * FROM STUDENT NATURAL JOIN PERSON WHERE FCODE = '${fcode}'`)
     return result
 }
 
