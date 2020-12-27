@@ -37,7 +37,15 @@ async function listStudentByFaculty(fcode) {
     return result
 }
 
+async function getStudentId(ssn) {
+    const result = await query(`SELECT STUDENT_ID FROM STUDENT WHERE SSN = '${ssn}'`);
+    if (result[0]) 
+        return result[0].STUDENT_ID
+    return null
+}
+
 module.exports = {
     createStudent,
-    listStudentByFaculty
+    listStudentByFaculty,
+    getStudentId
 }
