@@ -20,8 +20,8 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
 	async (req, res, next) => {
 		try {
-			await insertClass(req.body)
-			return res.status(200).json({})
+			const result = await insertClass(req.body)
+			return res.status(200).json({ result })
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -33,13 +33,14 @@ router.post(
 	(req, res, next) => authMiddleWare.decodeUser(),
 	async (req, res, next) => {
 		try {
-			const { current_user } = req
 			const { id, semester } = req.body
 			let result
 			if (current_user.ROLE == 'TEACHER') {
 				result = await viewClassByTeacher(id, semester)
 			} else if (current_user.ROLE == 'STUDENT') {
 				result = await viewClassByStudent(id, semester)
+			} else {
+				result = await viewClass()
 			}
 			return res.status(200).json(result)
 		} catch (err) {
@@ -49,15 +50,13 @@ router.post(
 )
 
 router.post(
-	'/view_class_and_document',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+	'/view_class',
+	(req, res, next) => authMiddleWare.decodeUser(),
 	async (req, res, next) => {
 		try {
-			return res
-				.status(200)
-				.json(
-					await viewClassAndDocument(req.body.student_id, req.body.semester)
-				)
+			const { id } = req.body
+			// TODO :  nhan vao id : idClass, tra ve danh sach sinh vien, danh sach giang vien, ten document cua lop hoc do
+			return res.status(200).json({})
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -95,28 +94,15 @@ router.post(
 )
 
 router.post(
-	'/view_class',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
-	async (req, res, next) => {
-		try {
-			console.log('view class')
-			return res.status(200).json(req)
-		} catch (err) {
-			return res.status(500).json({
-				message: err
-			})
-		}
-	}
-)
-
-router.post(
-	'/view_class_in_semeter',
+	'/view_class_and_document',
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
 	async (req, res, next) => {
 		try {
 			return res
 				.status(200)
-				.json(await viewClassInSemester(req.body.student_id, req.body.semester))
+				.json(
+					await viewClassAndDocument(req.body.student_id, req.body.semester)
+				)
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
