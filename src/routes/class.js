@@ -16,6 +16,9 @@ const {
 	getDetailClass
 } = require('./service/class')
 
+const { getInstructorId } = require('./service/instructor')
+const { getStudentId } = require('./service/student')
+
 router.post(
 	'/insert_class',
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
@@ -37,10 +40,12 @@ router.post(
 			const { semester } = req.body
 			const { current_user } = req
 			let result
-			if (current_user.ROLE == 'TEACHER') {
-				result = await viewClassByTeacher(current_user.SSN, semester)
-			} else if (current_user.ROLE == 'STUDENT') {
-				result = await viewClassByStudent(current_user.SSN, semester)
+			if (current_user.USER_ROLE == 'teacher') {
+				const id = await getInstructorId(current_user.SSN)
+				result = await viewClassByTeacher(id, semester)
+			} else if (current_user.USER_ROLE == 'student') {
+				const id = await getStudentId(current_user.SSN)
+				result = await viewClassByStudent(id, semester)
 			} else {
 				result = await viewClass(semester)
 			}

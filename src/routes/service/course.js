@@ -2,15 +2,13 @@ const { query } = require('../../helper')
 
 async function insertCourse(param) {
 	const { course_id, course_name, credit, fcode } = param
-	await query(`
+	const result = await query(`
         INSERT INTO COURSE
         VALUES ('${course_id.toUpperCase()}', 
                 '${course_name.toUpperCase()}', 
                  ${credit}, 
                 '${fcode.toUpperCase()}')`)
-	return {
-		message: 'Add course success'
-	}
+	return result
 }
 
 async function listCourse(semester) {
@@ -25,9 +23,9 @@ async function listCourse(semester) {
 	return result
 }
 
-async function listCourseRegisted(student_id, semester) {
+async function listCourseRegistered(student_id, semester) {
 	const result = {}
-	result.listCourseRegisted = await query(`
+	result.listCourseRegistered = await query(`
         SELECT *
         FROM REGISTER NATURAL JOIN COURSE
         WHERE SEMESTER = '${semester}' AND STUDENT_ID = '${student_id}';
@@ -96,7 +94,7 @@ async function courseInSemester(semester, faculty) {
 module.exports = {
 	insertCourse,
 	listCourse,
-	listCourseRegisted,
+	listCourseRegistered,
 	registerCourse,
 	viewCourses,
 	viewTotalCredit,

@@ -4,7 +4,7 @@ const router = express.Router()
 const {
 	insertCourse,
 	listCourse,
-	listCourseRegisted,
+	listCourseRegistered,
 	registerCourse,
 	viewCourses,
 	viewTotalCredit,
@@ -22,7 +22,8 @@ router.post(
 	async (req, res, next) => {
 		try {
 			const result = await insertCourse(req.body)
-			return res.status(200).json({ result })
+			console.log(result)
+			return res.status(200).json(result)
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -57,15 +58,17 @@ router.post(
 )
 
 router.post(
-	'/list_course_registed',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+	'/list_course_registered',
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
 			const { current_user } = req
-			const { student_id, semester } = req.body
-			return res
-				.status(200)
-				.json(await listCourseRegisted(student_id, semester))
+			const student_id = await getStudentId(current_user.SSN)
+			if (student_id == null)
+				return res.status(500).json({ message: 'Invalid SSN' })
+			const { semester } = req.body
+			const result = await listCourseRegistered(student_id, semester)
+			return res.status(200).json(result)
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -79,9 +82,9 @@ router.post(
 		try {
 			const { current_user } = req
 			const { SSN } = current_user
-			const student_id = await getStudentId(SSN);
+			const student_id = await getStudentId(SSN)
 			if (student_id == null)
-				return res.status(500).json({ message: "Invalid SSN" })
+				return res.status(500).json({ message: 'Invalid SSN' })
 			await registerCourse(req.body.course_id, student_id)
 			return res.status(200).json({ message: 'Success' })
 		} catch (err) {
