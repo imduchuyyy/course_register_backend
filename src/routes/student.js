@@ -3,6 +3,7 @@ const { authMiddleWare } = require('../middlewares')
 const router = express.Router()
 const { listClass, listClassReigisted } = require('./service/class')
 const { listCourse } = require('./service/course')
+const { createStudent, listStudentByFaculty } = require('./service/student')
 
 router.post(
     '/list_course',
@@ -25,7 +26,7 @@ router.post(
     (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
     async (req, res, next) => {
         try {
-            console.log("list student")
+            const result = await listStudentByFaculty(req.body.fcode);
             return res.status(200).json(result)
         } catch (err) {
             return res.status(500).json({
@@ -147,6 +148,20 @@ router.post(
         }
     }
 )
+
+router.post(
+    '/create_student',
+    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
+    async (req, res, next) => {
+        try {
+            await createStudent(req.body)
+            return res.status(200).json({ message: 'Success' })
+        } catch (err) {
+            return res.status(500).json({ message: 'Fail' })
+        }
+    }
+)
+
 
 
 module.exports = router

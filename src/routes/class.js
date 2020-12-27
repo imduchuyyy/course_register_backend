@@ -12,7 +12,8 @@ const {
 	viewClassOfCourse,
 	sumClassInstructor,
 	top5Class,
-	top5SemesterHighClass
+	top5SemesterHighClass,
+	getDetailClass
 } = require('./service/class')
 
 router.post(
@@ -51,12 +52,12 @@ router.post(
 
 router.post(
 	'/view_class',
-	(req, res, next) => authMiddleWare.decodeUser(),
+	// (req, res, next) => authMiddleWare.decodeUser(),
 	async (req, res, next) => {
 		try {
-			const { id } = req.body
-			// TODO :  nhan vao id : idClass, tra ve danh sach sinh vien, danh sach giang vien, ten document cua lop hoc do
-			return res.status(200).json({})
+			// Muốn định danh cho class, phải có thêm course_id
+			const { course_id, class_id } = req.body
+			return res.status(200).json(await getDetailClass(course_id, class_id))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}

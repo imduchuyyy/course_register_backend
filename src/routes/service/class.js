@@ -83,6 +83,18 @@ async function numberOfClass() {
 	return result[0]
 }
 
+async function getDetailClass(course_id, class_id) {
+	const [listStudent, listInstructor, listDocument] = await Promise.all([
+		query( `SELECT * FROM STUDY NATURAL JOIN STUDENT 
+				WHERE COURSE_ID = '${course_id}' AND CLASS_ID = '${class_id}'`),
+		query( `SELECT * FROM CLASS_GROUP NATURAL JOIN INSTRUCTOR 
+				WHERE COURSE_ID = '${course_id}' AND CLASS_ID = '${class_id}'`),
+		query( `SELECT * FROM USE_DOCUMENT NATURAL JOIN DOCUMENT 
+				WHERE COURSE_ID = '${course_id}'`),
+	])
+	return { listStudent, listInstructor, listDocument }
+}
+
 module.exports = {
 	insertClass,
 	listClass,
@@ -95,5 +107,6 @@ module.exports = {
 	sumClassInstructor,
 	top5Class,
 	top5SemesterHighClass,
-	numberOfClass
+	numberOfClass,
+	getDetailClass
 }

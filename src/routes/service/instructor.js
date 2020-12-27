@@ -29,10 +29,62 @@ async function viewInChargedIntructor(){
     return rows[0]
 }
 
+async function listInstructorByFaculty(fcode) {
+    let result = []
+    if (fcode.toLowerCase().trim() == 'all') 
+        result = await query(`SELECT * FROM INSTRUCTOR;`)
+    else result = await query(`SELECT * FROM INSTRUCTOR NATURAL JOIN STAFF WHERE FCODE = '${fcode}';`)
+    return result
+}
+
+async function createInstructor(instructorInfo) {
+    const { SSN, fname, lname, gender, birthdate, email, sff_id, fcode, degree, mgr_id } = instructorInfo
+    
+        await query(`
+            INSERT INTO PERSON
+            VALUES (
+                '${SSN}', 
+                '${fname.toUpperCase()}', 
+                '${lname.toUpperCase()}', 
+                'instructor',
+                '${gender.toUpperCase()}',
+                '${birthdate}',
+                '${email}' );
+        `);
+        
+        try {
+            await query(`
+                INSERT INTO STAFF
+                VALUES ('${sff_id.toUpperCase()}', '${SSN}', '${fcode.toUpperCase()}');
+            `);
+
+            try {
+                await query(`
+                    INSERT INTO INSTRUCTOR
+                    VALUES ('${sff_id.toUpperCase()}', '${degree}', '${mgr_id.toUpperCase()}');
+                `)
+            } catch (err) {
+                await query(`
+                    DELETE FROM STAFF
+                    WHERE STAFF_ID = '${sff_id}';
+                `)
+                throw 'Fail to insert instructor'
+            }
+        } catch (err) {
+            await query(`
+                DELETE FROM PERSON
+                WHERE SSN = '${SSN}';
+            `)
+            throw 'Fail to insert instructor'
+        }
+}
+
 module.exports = {
     insertInstructor,
     listInstructorInSemester,
     listInstructor,
     topInstructorNum,
-    viewInChargedIntructor
+    viewInChargedIntructor,
+    listInstructorByFaculty,
+    createInstructor
 }

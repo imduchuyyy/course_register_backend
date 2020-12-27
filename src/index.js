@@ -11,6 +11,7 @@ const SubjectRoute = require('./routes/subject')
 const CourseRoute = require('./routes/course')
 const ClassRoute = require('./routes/class')
 const StudentRoute = require('./routes/student')
+const InstructorRoute = require('./routes/instructor')
 
 const { PORT } = require('./environments')
 const { connection } = require('./helper')
@@ -33,6 +34,7 @@ app.use('/api', UserRoute)
 app.use('/api', SubjectRoute)
 app.use('/api', CourseRoute)
 app.use('/api', StudentRoute)
+app.use('/api', InstructorRoute)
 
 // connected mysql database
 connection.connect((err) => {
