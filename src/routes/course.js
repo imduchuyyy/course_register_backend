@@ -33,7 +33,7 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
 	async (req, res, next) => {
 		try {
-			const { semester, faculty } = req.body
+			const { semester, faculty = 'F001' } = req.body
 			const result = await courseInSemester(semester, faculty)
 			return res.status(200).json(result)
 		} catch (err) {
@@ -62,7 +62,9 @@ router.post(
 		try {
 			const { current_user } = req
 			const { student_id, semester } = req.body
-			return res.status(200).json(await listCourseRegisted(student_id, semester))
+			return res
+				.status(200)
+				.json(await listCourseRegisted(student_id, semester))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -71,20 +73,24 @@ router.post(
 
 router.post(
 	'/register_course',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
-			await registerCourse(req.body.course_id, req.body.student_id)
-			return res.status(200).json({ message: "Success" })
+			const { current_user } = req
+			const { SSN } = current_user
+			const result = await registerCourse(req.body.course_id, '000000001')
+			console.log(result)
+			return res.status(200).json({ message: 'Success' })
 		} catch (err) {
-			return res.status(500).json({ message: "Fail" })
+			console.log(err)
+			return res.status(500).json({ message: err })
 		}
 	}
 )
 
 router.post(
 	'/view_total_credit',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
 			const { student_id, semester } = req.body

@@ -42,7 +42,13 @@ async function viewClassByTeacher(instructor_id, semester) {
 	return result[0]
 }
 
-async function viewClass() {}
+async function viewClass(semester) {
+	const result = await query(
+		`SELECT * FROM CLASS WHERE YEAR_SEMESTER = ${semester}`
+	)
+
+	return result
+}
 
 async function viewClassInSemester(student_id, semester) {
 	const result = await query(
@@ -85,12 +91,12 @@ async function numberOfClass() {
 
 async function getDetailClass(course_id, class_id) {
 	const [listStudent, listInstructor, listDocument] = await Promise.all([
-		query( `SELECT * FROM STUDY NATURAL JOIN STUDENT 
+		query(`SELECT * FROM STUDY NATURAL JOIN STUDENT 
 				WHERE COURSE_ID = '${course_id}' AND CLASS_ID = '${class_id}'`),
-		query( `SELECT * FROM CLASS_GROUP NATURAL JOIN INSTRUCTOR 
+		query(`SELECT * FROM CLASS_GROUP NATURAL JOIN INSTRUCTOR 
 				WHERE COURSE_ID = '${course_id}' AND CLASS_ID = '${class_id}'`),
-		query( `SELECT * FROM USE_DOCUMENT NATURAL JOIN DOCUMENT 
-				WHERE COURSE_ID = '${course_id}'`),
+		query(`SELECT * FROM USE_DOCUMENT NATURAL JOIN DOCUMENT 
+				WHERE COURSE_ID = '${course_id}'`)
 	])
 	return { listStudent, listInstructor, listDocument }
 }
