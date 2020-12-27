@@ -14,7 +14,7 @@ async function insertCourse(param) {
 }
 
 async function listCourse(semester) {
-    const result = await query(`
+	const result = await query(`
         SELECT *
         FROM COURSE
         WHERE COURSE_ID IN (
@@ -22,29 +22,34 @@ async function listCourse(semester) {
             FROM CLASS
             WHERE YEAR_SEMESTER = '${semester}');
     `)
-    return result;
+	return result
 }
 
 async function listCourseRegisted(student_id, semester) {
-    const result = {};
-    result.listCourseRegisted = await query(`
+	const result = {}
+	result.listCourseRegisted = await query(`
         SELECT *
         FROM REGISTER NATURAL JOIN COURSE
         WHERE SEMESTER = '${semester}' AND STUDENT_ID = '${student_id}';
-    `);
-    result.totalCredit = (await viewTotalCredit(student_id, semester))[0].TOTAL_CREDIT
-    return result;
+    `)
+	result.totalCredit = (
+		await viewTotalCredit(student_id, semester)
+	)[0].TOTAL_CREDIT
+	return result
 }
 
 async function registerCourse(course_id, student_id) {
 	const result = await query(
-		`CALL REGISTER_COURSE('${course_id.toUpperCase()}', '${student_id.toUpperCase()}');`
+		`CALL REGISTER_COURSE('${course_id}', '${student_id}');`
 	)
+	console.log(result)
 	return result[0]
 }
 
 async function viewCourses(course_id) {
-	const result = await query(`SELECT * FROM CLASS WHERE COURSE_ID = '${course_id}'');`)
+	const result = await query(
+		`SELECT * FROM CLASS WHERE COURSE_ID = '${course_id}'');`
+	)
 	return result
 }
 

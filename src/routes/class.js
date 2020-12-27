@@ -31,17 +31,18 @@ router.post(
 
 router.post(
 	'/list_class',
-	(req, res, next) => authMiddleWare.decodeUser(),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
-			const { id, semester } = req.body
+			const { semester } = req.body
+			const { current_user } = req
 			let result
 			if (current_user.ROLE == 'TEACHER') {
-				result = await viewClassByTeacher(id, semester)
+				result = await viewClassByTeacher(current_user.SSN, semester)
 			} else if (current_user.ROLE == 'STUDENT') {
-				result = await viewClassByStudent(id, semester)
+				result = await viewClassByStudent(current_user.SSN, semester)
 			} else {
-				result = await viewClass()
+				result = await viewClass(semester)
 			}
 			return res.status(200).json(result)
 		} catch (err) {
@@ -69,9 +70,12 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'AAO_STAFF'),
 	async (req, res, next) => {
 		try {
-			return res
-				.status(200)
-				.json(await viewClassByStudent(req.body.student_id, req.body.semester))
+			const result = await viewClassByStudent(
+				req.body.student_id,
+				req.body.semester
+			)
+			console.log(result)
+			return res.status(200).json(result)
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
