@@ -6,7 +6,12 @@ const {
     listInstructorInSemester,
     listInstructor,
     topInstructorNum,
-    viewInChargedIntructor} = require('./service/instructor')
+	viewInChargedIntructor,
+	listInstructorByFaculty,
+	createInstructor,
+	sumClassInstructor,
+	top5Class,
+	top5SemesterHighClass } = require('./service/instructor')
 	
 router.post(
 	'/insert_instructor_teach',
@@ -69,4 +74,73 @@ router.post(
     }
 )
 
-module.export = router
+router.post(
+	'/list_instructor_by_faculty',
+    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
+    async (req, res, next) => {
+		try {
+	   		return res.status(200).json(await listInstructorByFaculty(req.body.fcode))
+		} catch (err) {
+	    	return res.status(500).json({ message: err })
+		}
+    }
+)
+
+router.post(
+	'/create_instructor',
+    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
+    async (req, res, next) => {
+		try {
+			await createInstructor(req.body)
+	   		return res.status(200).json({ message: 'Success' })
+		} catch (err) {
+			console.log(err)
+	    	return res.status(500).json({ message: 'Fail' })
+		}
+    }
+)
+
+
+router.post(
+	'/sum_class_of_instructor',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	async (req, res, next) => {
+		try {
+			return res
+				.status(200)
+				.json(
+					await sumClassInstructor(req.body.instructor_id, req.body.semester)
+				)
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
+router.post(
+	'/top_5_class',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	async (req, res, next) => {
+		try {
+			return res.status(200).json(await top5Class(req.body.instructor_id))
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
+router.post(
+	'/top_5_semeter_high_class',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	async (req, res, next) => {
+		try {
+			return res
+				.status(200)
+				.json(await top5SemesterHighClass(req.body.instructor_id))
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
+module.exports = router
