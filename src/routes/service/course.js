@@ -36,9 +36,9 @@ async function listCourseRegistered(student_id, semester) {
 	return result
 }
 
-async function registerCourse(course_id, student_id) {
+async function registerCourse(course_id, student_id, semester) {
 	const result = await query(
-		`CALL REGISTER_COURSE('${course_id}', '${student_id}');`
+		`CALL REGISTER_COURSE('${course_id}', '${student_id}', '${semester}');`
 	)
 	console.log(result)
 	return result[0]
@@ -46,7 +46,7 @@ async function registerCourse(course_id, student_id) {
 
 async function viewCourses(course_id) {
 	const result = await query(
-		`SELECT * FROM CLASS WHERE COURSE_ID = '${course_id}'');`
+		`SELECT * FROM COURSE WHERE COURSE_ID = '${course_id}'');`
 	)
 	return result
 }
@@ -91,6 +91,17 @@ async function courseInSemester(semester, faculty) {
 	return result[0]
 }
 
+async function listClassOfCourse(course_id, semester) {
+	const result = {}
+	result.listClass = await query(`SELECT * FROM CLASS WHERE COURSE_ID = '${course_id}' AND YEAR_SEMESTER = '${semester}'`)
+	result.totalStudent = (await query(`
+		SELECT COUNT(STUDENT_ID) COUNT_STUDENT
+		FROM REGISTER
+		WHERE COURSE_ID = '${course_id}' AND SEMESTER = '${semester}'
+	`))[0].COUNT_STUDENT
+	return result
+}
+
 module.exports = {
 	insertCourse,
 	listCourse,
@@ -102,5 +113,6 @@ module.exports = {
 	viewTop3Semester,
 	viewCourseDocument,
 	viewSumStudent,
-	courseInSemester
+	courseInSemester,
+	listClassOfCourse
 }

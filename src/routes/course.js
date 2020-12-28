@@ -12,7 +12,8 @@ const {
 	viewTop3Semester,
 	viewCourseDocument,
 	viewSumStudent,
-	courseInSemester
+	courseInSemester,
+	listClassOfCourse
 } = require('./service/course')
 const { getStudentId } = require('./service/student')
 
@@ -21,9 +22,8 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
 	async (req, res, next) => {
 		try {
-			const result = await insertCourse(req.body)
-			console.log(result)
-			return res.status(200).json(result)
+			await insertCourse(req.body)
+			return res.status(200).json({ message: 'Success' })
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -85,7 +85,7 @@ router.post(
 			const student_id = await getStudentId(SSN)
 			if (student_id == null)
 				return res.status(500).json({ message: 'Invalid SSN' })
-			await registerCourse(req.body.course_id, student_id)
+			await registerCourse(req.body.course_id, student_id, req.body.semester)
 			return res.status(200).json({ message: 'Success' })
 		} catch (err) {
 			console.log(err)
@@ -163,5 +163,22 @@ router.post(
 		}
 	}
 )
+
+router.post(
+	'/list_class_of_course',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
+	async (req, res, next) => {
+		try {
+			const { course_id, semester } = req.body
+			return res
+				.status(200)
+				.json(await listClassOfCourse(course_id, semester))
+		} catch (err) {
+			console.log(err)
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
 
 module.exports = router

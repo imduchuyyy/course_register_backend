@@ -25,7 +25,7 @@ router.post(
 	async (req, res, next) => {
 		try {
 			const result = await insertClass(req.body)
-			return res.status(200).json({ result })
+			return res.status(200).json(result)
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
