@@ -1,21 +1,31 @@
 const express = require('express')
 const { authMiddleWare } = require('../middlewares')
 const router = express.Router()
-const {    
+const {
 	insertInstructor,
-    listInstructorInSemester,
-    listInstructor,
-    topInstructorNum,
+	listInstructorInSemester,
+	listInstructor,
+	topInstructorNum,
 	viewInChargedIntructor,
 	listInstructorByFaculty,
-	createInstructor } = require('./service/instructor')
-	
+	createInstructor,
+	sumClassInstructor,
+	top5Class,
+	top5SemesterHighClass
+} = require('./service/instructor')
+
 router.post(
 	'/insert_instructor_teach',
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
 	async (req, res, next) => {
 		try {
-			await insertInstructor(req.body.idCourse, req.body.idClass, req.body.idInstructor, req.body.fromWeek, req.body.toWeek)
+			await insertInstructor(
+				req.body.idCourse,
+				req.body.idClass,
+				req.body.idInstructor,
+				req.body.fromWeek,
+				req.body.toWeek
+			)
 			return res.status(200).json({})
 		} catch (err) {
 			return res.status(500).json({ message: err })
@@ -24,77 +34,133 @@ router.post(
 )
 
 router.post(
-    '/instructor_in_semeter',
-    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
-    async (req, res, next) => {
+	'/instructor_in_semeter',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
+	async (req, res, next) => {
 		try {
-	    	return res.status(200).json(await listInstructorInSemester(req.body.semester, req.body.faculty))
+			return res
+				.status(200)
+				.json(
+					await listInstructorInSemester(req.body.semester, req.body.faculty)
+				)
 		} catch (err) {
-	    	return res.status(500).json({ message: err })
+			return res.status(500).json({ message: err })
 		}
-    }
+	}
 )
 
 router.post(
-    '/list_instructor',
-    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
-    async (req, res, next) => {
+	'/list_instructor',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
+	async (req, res, next) => {
 		try {
-	    	return res.status(200).json(await listInstructor(req.body.idCourse, req.body.idClass, req.body.semester))
+			return res
+				.status(200)
+				.json(
+					await listInstructor(
+						req.body.idCourse,
+						req.body.idClass,
+						req.body.semester
+					)
+				)
 		} catch (err) {
-	    	return res.status(500).json({ message: err })
+			return res.status(500).json({ message: err })
 		}
-    }
+	}
 )
 
 router.post(
-    '/top_instructor_num',
-    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
-    async (req, res, next) => {
+	'/top_instructor_num',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
+	async (req, res, next) => {
 		try {
-	   		return res.status(200).json(await topInstructorNum(req.body.semester, req.body.faculty))
+			return res
+				.status(200)
+				.json(await topInstructorNum(req.body.semester, req.body.faculty))
 		} catch (err) {
-	    	return res.status(500).json({ message: err })
+			return res.status(500).json({ message: err })
 		}
-    }
+	}
 )
 
 router.post(
-    '/view_in_charged_intructor',
-    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'AAO_STAFF'),
-    async (req, res, next) => {
+	'/view_in_charged_intructor',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'AAO_STAFF'),
+	async (req, res, next) => {
 		try {
-	   		return res.status(200).json(await viewInChargedIntructor())
+			return res.status(200).json(await viewInChargedIntructor())
 		} catch (err) {
-	    	return res.status(500).json({ message: err })
+			return res.status(500).json({ message: err })
 		}
-    }
+	}
 )
 
 router.post(
 	'/list_instructor_by_faculty',
-    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
-    async (req, res, next) => {
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
+	async (req, res, next) => {
 		try {
-	   		return res.status(200).json(await listInstructorByFaculty(req.body.fcode))
+			return res.status(200).json(await listInstructorByFaculty(req.body.fcode))
 		} catch (err) {
-	    	return res.status(500).json({ message: err })
+			return res.status(500).json({ message: err })
 		}
-    }
+	}
 )
 
 router.post(
 	'/create_instructor',
-    (req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
-    async (req, res, next) => {
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
+	async (req, res, next) => {
 		try {
 			await createInstructor(req.body)
-	   		return res.status(200).json({ message: 'Success' })
+			return res.status(200).json({ message: 'Success' })
 		} catch (err) {
 			console.log(err)
-	    	return res.status(500).json({ message: 'Fail' })
+			return res.status(500).json({ message: 'Fail' })
 		}
-    }
+	}
+)
+
+router.post(
+	'/sum_class_of_instructor',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	async (req, res, next) => {
+		try {
+			return res
+				.status(200)
+				.json(
+					await sumClassInstructor(req.body.instructor_id, req.body.semester)
+				)
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
+router.post(
+	'/top_5_class',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	async (req, res, next) => {
+		try {
+			return res.status(200).json(await top5Class(req.body.instructor_id))
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
+router.post(
+	'/top_5_semeter_high_class',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	async (req, res, next) => {
+		try {
+			return res
+				.status(200)
+				.json(await top5SemesterHighClass(req.body.instructor_id))
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
 )
 
 module.exports = router
