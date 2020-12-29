@@ -10,9 +10,6 @@ const {
 	viewClass,
 	viewClassInSemester,
 	viewClassOfCourse,
-	sumClassInstructor,
-	top5Class,
-	top5SemesterHighClass,
 	getDetailClass
 } = require('./service/class')
 
@@ -127,48 +124,6 @@ router.post(
 			return res
 				.status(200)
 				.json(await viewClassOfCourse(req.body.student_id, req.body.semester))
-		} catch (err) {
-			return res.status(500).json({ message: err })
-		}
-	}
-)
-
-router.post(
-	'/sum_class_of_instructor',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
-	async (req, res, next) => {
-		try {
-			return res
-				.status(200)
-				.json(
-					await sumClassInstructor(req.body.instructor_id, req.body.semester)
-				)
-		} catch (err) {
-			return res.status(500).json({ message: err })
-		}
-	}
-)
-
-router.post(
-	'/top_5_class',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
-	async (req, res, next) => {
-		try {
-			return res.status(200).json(await top5Class(req.body.instructor_id))
-		} catch (err) {
-			return res.status(500).json({ message: err })
-		}
-	}
-)
-
-router.post(
-	'/top_5_semeter_high_class',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
-	async (req, res, next) => {
-		try {
-			return res
-				.status(200)
-				.json(await top5SemesterHighClass(req.body.instructor_id))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}

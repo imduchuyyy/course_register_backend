@@ -115,6 +115,25 @@ async function createInstructor(instructorInfo) {
 	}
 }
 
+async function sumClassInstructor(instructor_id, semester) {
+	const result = await query(
+		`CALL SUM_CLASS_OF_INSTRUCTOR('${instructor_id}', '${semester}');`
+	)
+	return result[0]
+}
+
+async function top5Class(instructor_id) {
+	const result = await query(`CALL TOP_5_CLASS('${instructor_id}');`)
+	return result[0]
+}
+
+async function top5SemesterHighClass(instructor_id) {
+	const result = await query(
+		`CALL TOP_5_SEMESTER_HIGH_CLASS('${instructor_id}');`
+	)
+	return result[0]
+}
+
 module.exports = {
 	insertInstructor,
 	listInstructorInSemester,
@@ -123,5 +142,8 @@ module.exports = {
 	viewInChargedIntructor,
 	listInstructorByFaculty,
 	createInstructor,
-	getInstructorId
+	getInstructorId,
+	sumClassInstructor,
+	top5Class,
+	top5SemesterHighClass
 }

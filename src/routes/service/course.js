@@ -65,11 +65,6 @@ async function viewTotalCourseRegisted(student_id, semester) {
 	return result[0]
 }
 
-async function viewTop3Semester(student_id) {
-	const result = await query(`CALL VIEW_TOP3_SEMESTER('${student_id}');`)
-	return result[0]
-}
-
 async function viewCourseDocument(staff_id, year_semester, class_id) {
 	const result = await query(
 		`CALL VIEW_COURSE_DOCUMENT('${staff_id}', '${year_semester}', '${class_id}');`
@@ -99,7 +94,6 @@ module.exports = {
 	viewCourses,
 	viewTotalCredit,
 	viewTotalCourseRegisted,
-	viewTop3Semester,
 	viewCourseDocument,
 	viewSumStudent,
 	courseInSemester
