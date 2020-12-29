@@ -11,7 +11,8 @@ const {
 	createInstructor,
 	sumClassInstructor,
 	top5Class,
-	top5SemesterHighClass
+	top5SemesterHighClass,
+	getInstructorId
 } = require('./service/instructor')
 
 router.post(
@@ -123,13 +124,15 @@ router.post(
 
 router.post(
 	'/sum_class_of_instructor',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
+			const { current_user } = req 
+			const id = await getInstructorId(current_user.SSN)
 			return res
 				.status(200)
 				.json(
-					await sumClassInstructor(req.body.instructor_id, req.body.semester)
+					await sumClassInstructor(id, req.body.semester)
 				)
 		} catch (err) {
 			return res.status(500).json({ message: err })
@@ -139,10 +142,12 @@ router.post(
 
 router.post(
 	'/top_5_class',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
-			return res.status(200).json(await top5Class(req.body.instructor_id))
+			const { current_user } = req 
+			const id = await getInstructorId(current_user.SSN)
+			return res.status(200).json(await top5Class(id))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -151,12 +156,14 @@ router.post(
 
 router.post(
 	'/top_5_semeter_high_class',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
+			const { current_user } = req 
+			const id = await getInstructorId(current_user.SSN)
 			return res
 				.status(200)
-				.json(await top5SemesterHighClass(req.body.instructor_id))
+				.json(await top5SemesterHighClass(id))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}

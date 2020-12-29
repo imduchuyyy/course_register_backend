@@ -6,15 +6,18 @@ const { listCourse } = require('./service/course')
 const {
 	createStudent,
 	listStudentByFaculty,
-	viewTop3Semester
+	viewTop3Semester,
+	getStudentId
 } = require('./service/student')
 
 router.post(
 	'/view_top_3_semeter',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
-			return res.status(200).json(await viewTop3Semester(req.body.student_id))
+			const { current_user } = req 
+			const id = await getStudentId(current_user.SSN)
+			return res.status(200).json(await viewTop3Semester(id))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}

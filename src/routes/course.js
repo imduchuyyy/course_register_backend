@@ -16,6 +16,7 @@ const {
 	listClassOfCourse
 } = require('./service/course')
 const { getStudentId } = require('./service/student')
+const { getInstructorId } = require('./service/instructor')
 
 router.post(
 	'/add_course',
@@ -99,8 +100,10 @@ router.post(
 	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
-			const { student_id, semester } = req.body
-			return res.status(200).json(await viewTotalCredit(student_id, semester))
+			const { semester } = req.body
+			const { current_user } = req 
+			const id = await getStudentId(current_user.SSN)
+			return res.status(200).json(await viewTotalCredit(id, semester))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -109,13 +112,15 @@ router.post(
 
 router.post(
 	'/view_total_course_registed',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
-			const { student_id, semester } = req.body
+			const { semester } = req.body
+			const { current_user } = req 
+			const id = await getStudentId(current_user.SSN)
 			return res
 				.status(200)
-				.json(await viewTotalCourseRegisted(student_id, semester))
+				.json(await viewTotalCourseRegisted(id, semester))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -124,10 +129,12 @@ router.post(
 
 router.post(
 	'/view_top_3_semeter',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
-			return res.status(200).json(await viewTop3Semester(req.body.student_id))
+			const { current_user } = req 
+			const id = await getStudentId(current_user.SSN)
+			return res.status(200).json(await viewTop3Semester(id))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -136,13 +143,15 @@ router.post(
 
 router.post(
 	'/view_course_document',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
-			const { staff_id, semester, class_id } = req.body
+			const { semester, class_id } = req.body
+			const { current_user } = req 
+			const id = await getInstructorId(current_user.SSN)
 			return res
 				.status(200)
-				.json(await viewCourseDocument(staff_id, semester, class_id))
+				.json(await viewCourseDocument(id, semester, class_id))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
@@ -151,13 +160,16 @@ router.post(
 
 router.post(
 	'/view_sum_student',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'INSTRUCTOR'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
-			const { staff_id, semester, class_id } = req.body
+			const { semester, class_id } = req.body
+			const { current_user } = req 
+			const id = await getInstructorId(current_user.SSN)
+
 			return res
 				.status(200)
-				.json(await viewSumStudent(staff_id, semester, class_id))
+				.json(await viewSumStudent(id, semester, class_id))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}

@@ -14,7 +14,22 @@ const {
 } = require('./service/class')
 
 const { getInstructorId } = require('./service/instructor')
-const { getStudentId } = require('./service/student')
+const { getStudentId, viewTop3Semester } = require('./service/student')
+
+const {
+	sumStudent,
+    sumClass,
+	maxInstructor,
+	averageStudentOfCourse
+} = require('./service/faculty')
+
+const {
+	getNumberOfCourse,
+    getNumberOfClass,
+    getStudentByCourse,
+    getStudentByClass,
+    getNumberOfStudent
+} = require('./service/aao_staff')
 
 router.post(
 	'/insert_class',
@@ -37,7 +52,7 @@ router.post(
 			const { semester } = req.body
 			const { current_user } = req
 			let result
-			if (current_user.USER_ROLE == 'teacher') {
+			if (current_user.USER_ROLE == 'instructor') {
 				const id = await getInstructorId(current_user.SSN)
 				result = await viewClassByTeacher(id, semester)
 			} else if (current_user.USER_ROLE == 'student') {
@@ -102,13 +117,15 @@ router.post(
 
 router.post(
 	'/view_class_and_document',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
+			const { current_user } = req 
+			const id = await getStudentId(current_user.SSN)
 			return res
 				.status(200)
 				.json(
-					await viewClassAndDocument(req.body.student_id, req.body.semester)
+					await viewClassAndDocument(id, req.body.semester)
 				)
 		} catch (err) {
 			return res.status(500).json({ message: err })
@@ -118,12 +135,63 @@ router.post(
 
 router.post(
 	'/view_class_of_course',
-	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'STUDENT'),
+	authMiddleWare.decodeUser,
 	async (req, res, next) => {
 		try {
+			const { current_user } = req 
+			const id = await getStudentId(current_user.SSN)
 			return res
 				.status(200)
-				.json(await viewClassOfCourse(req.body.student_id, req.body.semester))
+				.json(await viewClassOfCourse(id, req.body.semester))
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
+router.post(
+	'/dashboard',
+	authMiddleWare.decodeUser,
+	async (req, res, next) => {
+		try {
+			const { current_user } = req 
+			const result = {}
+			if (current_user.USER_ROLE = 'student') {
+				const id = await getStudentId(current_user.SSN)
+				result.top3semester = await viewTop3Semester(id)
+			} else if (current_user.USER_ROLE = 'instructor') {
+				const id = await getInstructorId(current_user.SSN)
+				const { semester } = req.body
+				result.sumClass = await sumClassInstructor(id, semester)
+				result.top5Class = await top5Class(id)
+				result.top5Semester = await top5SemesterHighClass(id)
+			} else if (current_user.USER_ROLE = 'faculty') {
+				const { fcode, semester } = req.body 
+				result.sumStudent = await sumStudent(semester, fcode)
+				result.sumClass = await sumClass(semester, fcode)
+				result.maxInstructor = await maxInstructor(semester, fcode)
+			} else if (current_user.USER_ROLE = 'aao_staff') {
+				const { course_id, semester } = req.body
+				result.numberOfCourse = await getNumberOfCourse()
+				result.numberOfClass = await getNumberOfClass()
+				result.studentByCourse = await getStudentByCourse(semester)
+				result.studentByClass = await getStudentByClass(course_id, semester)
+				result.numberOfStudent = await getNumberOfStudent()
+			} else throw "Invalid role"
+			return res.status(200).json(result)
+		} catch (err) {
+			return res.status(500).json({ message: err })
+		}
+	}
+)
+
+router.post(
+	'/averageStudentOfCourse',
+	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'FACULTY'),
+	async (req, res, next) => {
+		try {
+			const {course_id, semester} = req.body
+			return res.status(200).json(await averageStudentOfCourse(course_id, semester))
 		} catch (err) {
 			return res.status(500).json({ message: err })
 		}
