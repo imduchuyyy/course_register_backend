@@ -11,6 +11,13 @@ async function insertCourse(param) {
 	return result
 }
 
+async function listAllCourse(fcode) {
+	const result = await query(`
+		SELECT * FROM COURSE WHERE FCODE = '${fcode}'
+	`)
+	return result
+}
+
 async function listCourse(semester) {
 	const result = await query(`
         SELECT *
@@ -88,18 +95,23 @@ async function courseInSemester(semester, faculty) {
 
 async function listClassOfCourse(course_id, semester) {
 	const result = {}
-	result.listClass = await query(`SELECT * FROM CLASS WHERE COURSE_ID = '${course_id}' AND YEAR_SEMESTER = '${semester}'`)
-	result.totalStudent = (await query(`
+	result.listClass = await query(
+		`SELECT * FROM CLASS WHERE COURSE_ID = '${course_id}' AND YEAR_SEMESTER = '${semester}'`
+	)
+	result.totalStudent = (
+		await query(`
 		SELECT COUNT(STUDENT_ID) COUNT_STUDENT
 		FROM REGISTER
 		WHERE COURSE_ID = '${course_id}' AND SEMESTER = '${semester}'
-	`))[0].COUNT_STUDENT
+	`)
+	)[0].COUNT_STUDENT
 	return result
 }
 
 module.exports = {
 	insertCourse,
 	listCourse,
+	listAllCourse,
 	listCourseRegistered,
 	registerCourse,
 	viewCourses,

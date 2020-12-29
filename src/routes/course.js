@@ -9,7 +9,8 @@ const {
 	viewCourses,
 	viewTotalCredit,
 	viewTotalCourseRegisted,
-	viewTop3Semester,
+
+	listAllCourse,
 	viewCourseDocument,
 	viewSumStudent,
 	courseInSemester,
@@ -23,7 +24,8 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
 	async (req, res, next) => {
 		try {
-			await insertCourse(req.body)
+			const result = await insertCourse(req.body)
+			console.log(result)
 			return res.status(200).json({ message: 'Success' })
 		} catch (err) {
 			return res.status(500).json({ message: err })
@@ -36,8 +38,13 @@ router.post(
 	(req, res, next) => authMiddleWare.checkAuth(req, res, next, 'ADMIN'),
 	async (req, res, next) => {
 		try {
-			const { semester, faculty = 'F001' } = req.body
-			const result = await courseInSemester(semester, faculty)
+			const { semester, fcode = 'F001' } = req.body
+			let result
+			if (semester == 'all') {
+				result = await listAllCourse(fcode)
+			} else {
+				result = await courseInSemester(semester, fcode)
+			}
 			return res.status(200).json(result)
 		} catch (err) {
 			return res.status(500).json({ message: err })
@@ -182,15 +189,12 @@ router.post(
 	async (req, res, next) => {
 		try {
 			const { course_id, semester } = req.body
-			return res
-				.status(200)
-				.json(await listClassOfCourse(course_id, semester))
+			return res.status(200).json(await listClassOfCourse(course_id, semester))
 		} catch (err) {
 			console.log(err)
 			return res.status(500).json({ message: err })
 		}
 	}
 )
-
 
 module.exports = router

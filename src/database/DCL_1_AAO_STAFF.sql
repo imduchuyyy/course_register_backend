@@ -12,7 +12,7 @@ DROP PROCEDURE IF EXISTS getClassOfStudent;
 DELIMITER //
 CREATE PROCEDURE getClassOfStudent(STU_ID CHAR(9), SEMESTER CHAR(3))
 BEGIN
-    SELECT DISTINCT *
+    SELECT *
     FROM LEARNING_SYSTEM.CLASS
     WHERE YEAR_SEMESTER = SEMESTER AND COURSE_ID IN (
 		SELECT COURSE_ID FROM LEARNING_SYSTEM.REGISTER
@@ -20,14 +20,14 @@ BEGIN
 END //
 DELIMITER ;
 -- test
-#CALL LEARNING_SYSTEM.getClassOfStudent('SD1800000','201');
+CALL LEARNING_SYSTEM.getClassOfStudent('SD1800000','201');
 #####################################################################################################################################################################
 -- (i.3). Xem danh sách lớp được phụ trách bởi một giảng viên ở một học kỳ
 DROP PROCEDURE IF EXISTS getClassByInstructor;
 DELIMITER //
 CREATE PROCEDURE getClassByInstructor(STA_ID CHAR(9), SEMESTER CHAR(3))
 BEGIN
-    SELECT DISTINCT *
+    SELECT *
     FROM LEARNING_SYSTEM.CLASS c
     WHERE YEAR_SEMESTER = SEMESTER AND COURSE_ID IN (
 		SELECT cg.COURSE_ID FROM LEARNING_SYSTEM.CLASS_GROUP cg
@@ -35,14 +35,14 @@ BEGIN
 END //
 DELIMITER ;
 -- test
-#CALL getClassByInstructor('SFF000001','201');
+CALL getClassByInstructor('SFF000001','201');
 #####################################################################################################################################################################
 -- (i.4). Xem danh sách môn học được đăng ký ở mỗi học kỳ ở mỗi khoa
 DROP PROCEDURE IF EXISTS getCourseOfFaculty;
 DELIMITER //
 CREATE PROCEDURE getCourseOfFaculty()
 BEGIN
-    SELECT DISTINCT *
+    SELECT DISTINCT FACULTY_NAME, YEAR_SEMESTER, co.COURSE_NAME
     FROM FACULTY, COURSE co, CLASS cl
     WHERE FACULTY_CODE = FCODE AND co.COURSE_ID = cl.COURSE_ID
     ORDER BY FACULTY_NAME, YEAR_SEMESTER, co.COURSE_NAME;
@@ -56,7 +56,7 @@ DROP PROCEDURE IF EXISTS getRegisterStudents;
 DELIMITER //
 CREATE PROCEDURE getRegisterStudents()
 BEGIN
-    SELECT DISTINCT *
+    SELECT DISTINCT FNAME, s.STUDENT_ID, st.CLASS_ID, YEAR_SEMESTER, FACULTY_NAME
     FROM PERSON p, STUDENT s, STUDY st, FACULTY, CLASS cl
     WHERE p.SSN = s.SSN AND s.STUDENT_ID = st.STUDENT_ID 
 		AND s.FCODE = FACULTY_CODE AND st.CLASS_ID = cl.CLASS_ID 
@@ -71,7 +71,7 @@ DROP PROCEDURE IF EXISTS getInChargedInstructors;
 DELIMITER //
 CREATE PROCEDURE getInChargedIntructors()
 BEGIN
-    SELECT DISTINCT *
+    SELECT DISTINCT FNAME, cg.STAFF_ID, cg.CLASS_ID, YEAR_SEMESTER, FACULTY_NAME
     FROM PERSON p, STAFF s, CLASS_GROUP cg, CLASS c, FACULTY
     WHERE p.SSN = s.SSN AND s.STAFF_ID = cg.STAFF_ID
 		AND cg.CLASS_ID = c.CLASS_ID AND cg.COURSE_ID = c.COURSE_ID AND s.FCODE = FACULTY_CODE
@@ -167,35 +167,3 @@ DELIMITER ;
 -- test
 #CALL getNumberOfStudent();
 #####################################################################################################################################################################
-DROP USER IF EXISTS 'aao_staff'@'localhost';
-CREATE USER 'aao_staff'@'localhost' IDENTIFIED BY 'aao123456';
-
-GRANT SELECT ON LEARNING_SYSTEM.* TO 'aao_staff'@'localhost';
-
-GRANT INSERT, UPDATE, DELETE ON LEARNING_SYSTEM.REGISTER TO 'aao_staff'@'localhost';
-GRANT INSERT, UPDATE, DELETE ON LEARNING_SYSTEM.CLASS TO 'aao_staff'@'localhost';
-GRANT INSERT, UPDATE, DELETE ON LEARNING_SYSTEM.CLASS_GROUP TO 'aao_staff'@'localhost';
-GRANT INSERT, UPDATE, DELETE ON LEARNING_SYSTEM.WEEK_OF_STUDY TO 'aao_staff'@'localhost';
-
--- 2
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getClassOfStudent TO 'aao_staff'@'localhost';
--- 3
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getClassByInstructor TO 'aao_staff'@'localhost';
--- 4
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getCourseOfFaculty TO 'aao_staff'@'localhost';
--- 5
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getRegisterStudents TO 'aao_staff'@'localhost';
--- 6
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getInChargedIntructors TO 'aao_staff'@'localhost';
--- 7
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getAssignedDocument TO 'aao_staff'@'localhost';
--- 8
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getNumberOfCourse TO 'aao_staff'@'localhost';
--- 9
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getNumberOfClass TO 'aao_staff'@'localhost';
--- 10
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getStudentByClass TO 'aao_staff'@'localhost';
--- 11
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getStudentByCourse TO 'aao_staff'@'localhost';
--- 12
-GRANT EXECUTE ON PROCEDURE LEARNING_SYSTEM.getNumberOfStudent TO 'aao_staff'@'localhost';
