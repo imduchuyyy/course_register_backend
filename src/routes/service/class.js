@@ -1,4 +1,5 @@
 const { query } = require('../../helper')
+const { viewTotalCredit } = require('./course')
 
 async function insertClass(param) {
 	const { course_id, class_id, year_semester, period, faculty } = param
@@ -29,10 +30,16 @@ async function viewClassAndDocument(student_id, semester) {
 }
 
 async function viewClassByStudent(student_id, semester) {
-	const result = await query(
+	const result = {}
+	result.listClass = (await query(
 		`CALL getClassOfStudent('${student_id}', '${semester}');`
-	)
-	return result[0]
+	))[0]
+
+	result.totalCredit = (
+		await viewTotalCredit(student_id, semester)
+	)[0].TOTAL_CREDIT || 0
+
+	return result
 }
 
 async function viewClassByTeacher(instructor_id, semester) {
